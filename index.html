@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simulación de Jerarquía de Memoria</title>
+    <author>Gartner Maximiliano</author>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      .memory-system {
+        display: flex;
+        margin: 20px 0;
+      }
+      .memory-level {
+        margin: 5px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+      }
+      #registers {
+        background-color: #ffcccc;
+        width: 80px;
+      }
+      #cache-l1 {
+        background-color: #ffeecc;
+        width: 120px;
+      }
+      #cache-l2 {
+        background-color: #ffffcc;
+        width: 150px;
+      }
+      #ram {
+        background-color: #ccffcc;
+        width: 200px;
+      }
+      #disk {
+        background-color: #ccccff;
+        width: 250px;
+      }
+      .memory-block {
+        margin: 5px 0;
+        padding: 5px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 3px;
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .active {
+        background-color: #ff9900;
+        color: white;
+        font-weight: bold;
+      }
+      .control-panel {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #eee;
+        border-radius: 5px;
+      }
+      button {
+        padding: 8px 15px;
+        margin: 5px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+      .stat-box {
+        flex: 1;
+        min-width: 200px;
+        margin: 10px;
+        padding: 15px;
+        background-color: #e9f7ef;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      #access-log {
+        height: 150px;
+        overflow-y: auto;
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Simulación de Jerarquía de Memoria</h1>
+      <p>
+        Esta simulación muestra cómo los datos se mueven entre diferentes
+        niveles de memoria de acuerdo con el principio de localidad.
+      </p>
+
+      <div class="memory-system">
+        <div class="memory-level" id="registers">
+          <h3>Registros</h3>
+          <div class="memory-content">
+            <div class="memory-block" id="reg-1">R1: 0</div>
+            <div class="memory-block" id="reg-2">R2: 0</div>
+            <div class="memory-block" id="reg-3">R3: 0</div>
+            <div class="memory-block" id="reg-4">R4: 0</div>
+          </div>
+        </div>
+
+        <div class="memory-level" id="cache-l1">
+          <h3>Caché L1</h3>
+          <div class="memory-content">
+            <div class="memory-block" id="l1-1">Bloque 1: Vacío</div>
+            <div class="memory-block" id="l1-2">Bloque 2: Vacío</div>
+            <div class="memory-block" id="l1-3">Bloque 3: Vacío</div>
+            <div class="memory-block" id="l1-4">Bloque 4: Vacío</div>
+            <div class="memory-block" id="l1-5">Bloque 5: Vacío</div>
+            <div class="memory-block" id="l1-6">Bloque 6: Vacío</div>
+          </div>
+        </div>
+
+        <div class="memory-level" id="cache-l2">
+          <h3>Caché L2</h3>
+          <div class="memory-content">
+            <div class="memory-block" id="l2-1">Bloque 1: Vacío</div>
+            <div class="memory-block" id="l2-2">Bloque 2: Vacío</div>
+            <div class="memory-block" id="l2-3">Bloque 3: Vacío</div>
+            <div class="memory-block" id="l2-4">Bloque 4: Vacío</div>
+            <div class="memory-block" id="l2-5">Bloque 5: Vacío</div>
+            <div class="memory-block" id="l2-6">Bloque 6: Vacío</div>
+            <div class="memory-block" id="l2-7">Bloque 7: Vacío</div>
+            <div class="memory-block" id="l2-8">Bloque 8: Vacío</div>
+          </div>
+        </div>
+
+        <div class="memory-level" id="ram">
+          <h3>Memoria RAM</h3>
+          <div class="memory-content">
+            <div class="memory-block" id="ram-1">Dir 0-9: Datos</div>
+            <div class="memory-block" id="ram-2">Dir 10-19: Datos</div>
+            <div class="memory-block" id="ram-3">Dir 20-29: Datos</div>
+            <div class="memory-block" id="ram-4">Dir 30-39: Datos</div>
+            <div class="memory-block" id="ram-5">Dir 40-49: Datos</div>
+            <div class="memory-block" id="ram-6">Dir 50-59: Datos</div>
+            <div class="memory-block" id="ram-7">Dir 60-69: Datos</div>
+            <div class="memory-block" id="ram-8">Dir 70-79: Datos</div>
+            <div class="memory-block" id="ram-9">Dir 80-89: Datos</div>
+            <div class="memory-block" id="ram-10">Dir 90-99: Datos</div>
+          </div>
+        </div>
+
+        <div class="memory-level" id="disk">
+          <h3>Disco Duro</h3>
+          <div class="memory-content">
+            <div class="memory-block" id="disk-1">Bloque 0-99: Datos</div>
+            <div class="memory-block" id="disk-2">Bloque 100-199: Datos</div>
+            <div class="memory-block" id="disk-3">Bloque 200-299: Datos</div>
+            <div class="memory-block" id="disk-4">Bloque 300-399: Datos</div>
+            <div class="memory-block" id="disk-5">Bloque 400-499: Datos</div>
+            <div class="memory-block" id="disk-6">Bloque 500-599: Datos</div>
+            <div class="memory-block" id="disk-7">Bloque 600-699: Datos</div>
+            <div class="memory-block" id="disk-8">Bloque 700-799: Datos</div>
+            <div class="memory-block" id="disk-9">Bloque 800-899: Datos</div>
+            <div class="memory-block" id="disk-10">Bloque 900-999: Datos</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-panel">
+        <h2>Simular patrones de acceso</h2>
+        <button id="simulate-high">Localidad Alta</button>
+        <button id="simulate-medium">Localidad Media</button>
+        <button id="simulate-low">Localidad Baja</button>
+        <button id="simulate-disk">Acceso Intensivo a Disco</button>
+        <button id="reset">Reiniciar</button>
+
+        <h3>Registro de accesos:</h3>
+        <div id="access-log"></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat-box">
+          <h3>Estadísticas de Acceso</h3>
+          <p>Total de accesos: <span id="total-accesses">0</span></p>
+          <p>Hit Ratio (Registros): <span id="register-hit-ratio">0%</span></p>
+          <p>Hit Ratio (Caché L1): <span id="l1-hit-ratio">0%</span></p>
+          <p>Hit Ratio (Caché L2): <span id="l2-hit-ratio">0%</span></p>
+          <p>Hit Ratio (RAM): <span id="ram-hit-ratio">0%</span></p>
+          <p>Accesos a Disco: <span id="disk-accesses">0</span></p>
+        </div>
+        <div class="stat-box">
+          <h3>Tiempos de Acceso</h3>
+          <p>
+            Tiempo promedio de acceso: <span id="avg-access-time">0</span> ns
+          </p>
+          <p>Tiempo para Registros: 1 ns</p>
+          <p>Tiempo para Caché L1: 3 ns</p>
+          <p>Tiempo para Caché L2: 10 ns</p>
+          <p>Tiempo para RAM: 100 ns</p>
+          <p>Tiempo para Disco: 10,000,000 ns</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Configuración inicial
+      const accessTimes = {
+        registers: 1,
+        cacheL1: 3,
+        cacheL2: 10,
+        ram: 100,
+        disk: 10000000,
+      }
+
+      let stats = {
+        totalAccesses: 0,
+        registerHits: 0,
+        l1Hits: 0,
+        l2Hits: 0,
+        ramHits: 0,
+        diskAccesses: 0,
+        totalAccessTime: 0,
+      }
+
+      let memoryState = {
+        registers: Array(4).fill(null),
+        cacheL1: Array(6).fill(null),
+        cacheL2: Array(8).fill(null),
+        ram: Array.from({ length: 10 }, (_, i) => ({
+          start: i * 10,
+          end: i * 10 + 9,
+          data: Array(10).fill(0),
+        })),
+        disk: Array.from({ length: 10 }, (_, i) => ({
+          start: i * 100,
+          end: i * 100 + 99,
+        })),
+      }
+
+      // Función para simular un acceso a memoria
+      function simulateAccess(address) {
+        stats.totalAccesses++
+        let accessTime = 0
+        let found = false
+        let log = `Acceso a dirección ${address}: `
+
+        // Comprobar registros
+        const regIndex = memoryState.registers.indexOf(address)
+        if (regIndex !== -1) {
+          highlightBlock(`reg-${regIndex + 1}`)
+          stats.registerHits++
+          accessTime = accessTimes.registers
+          log += `HIT en Registros (${accessTime} ns)`
+          found = true
+        }
+
+        // Comprobar Caché L1
+        else if (!found) {
+          const l1Block = memoryState.cacheL1.findIndex(
+            (block) =>
+              block !== null && address >= block.start && address <= block.end
+          )
+
+          if (l1Block !== -1) {
+            highlightBlock(`l1-${l1Block + 1}`)
+            stats.l1Hits++
+            accessTime = accessTimes.cacheL1
+            log += `HIT en Caché L1 (${accessTime} ns)`
+            found = true
+
+            // Traer a registros
+            updateRegisters(address)
+          }
+        }
+
+        // Comprobar Caché L2
+        if (!found) {
+          const l2Block = memoryState.cacheL2.findIndex(
+            (block) =>
+              block !== null && address >= block.start && address <= block.end
+          )
+
+          if (l2Block !== -1) {
+            highlightBlock(`l2-${l2Block + 1}`)
+            stats.l2Hits++
+            accessTime = accessTimes.cacheL2
+            log += `HIT en Caché L2 (${accessTime} ns)`
+            found = true
+
+            // Traer a Caché L1 y registros
+            updateCacheL1(memoryState.cacheL2[l2Block])
+            updateRegisters(address)
+          }
+        }
+
+        // Comprobar RAM
+        if (!found) {
+          const ramBlock = memoryState.ram.findIndex(
+            (block) => address >= block.start && address <= block.end
+          )
+
+          if (ramBlock !== -1) {
+            highlightBlock(`ram-${ramBlock + 1}`)
+            stats.ramHits++
+            accessTime = accessTimes.ram
+            log += `HIT en RAM (${accessTime} ns)`
+            found = true
+
+            // Traer a Caché L2, Caché L1 y registros
+            const blockData = {
+              start: Math.floor(address / 10) * 10,
+              end: Math.floor(address / 10) * 10 + 9,
+              data: memoryState.ram[ramBlock].data,
+            }
+            updateCacheL2(blockData)
+            updateCacheL1(blockData)
+            updateRegisters(address)
+          }
+        }
+
+        // Acceder al disco
+        if (!found) {
+          const diskBlock = Math.floor(address / 100)
+          highlightBlock(`disk-${diskBlock + 1}`)
+          stats.diskAccesses++
+          accessTime = accessTimes.disk
+          log += `MISS - Acceso a DISCO (${accessTime} ns)`
+
+          // Traer a RAM, Caché L2, Caché L1 y registros
+          const blockData = {
+            start: Math.floor(address / 10) * 10,
+            end: Math.floor(address / 10) * 10 + 9,
+            data: Array(10)
+              .fill(0)
+              .map((_, i) => Math.floor(Math.random() * 100)),
+          }
+          updateRAM(blockData)
+          updateCacheL2(blockData)
+          updateCacheL1(blockData)
+          updateRegisters(address)
+        }
+
+        stats.totalAccessTime += accessTime
+        updateStats()
+        logAccess(log)
+
+        return accessTime
+      }
+
+      // Funciones para actualizar cada nivel de memoria
+      function updateRegisters(address) {
+        const emptySlot = memoryState.registers.indexOf(null)
+        if (emptySlot !== -1) {
+          memoryState.registers[emptySlot] = address
+        } else {
+          // Política de reemplazo simple: reemplazar el primer registro
+          memoryState.registers.shift()
+          memoryState.registers.push(address)
+        }
+        updateMemoryDisplay()
+      }
+
+      function updateCacheL1(block) {
+        const emptySlot = memoryState.cacheL1.indexOf(null)
+        if (emptySlot !== -1) {
+          memoryState.cacheL1[emptySlot] = block
+        } else {
+          // Política de reemplazo simple: FIFO
+          memoryState.cacheL1.shift()
+          memoryState.cacheL1.push(block)
+        }
+        updateMemoryDisplay()
+      }
+
+      function updateCacheL2(block) {
+        const emptySlot = memoryState.cacheL2.indexOf(null)
+        if (emptySlot !== -1) {
+          memoryState.cacheL2[emptySlot] = block
+        } else {
+          // Política de reemplazo simple: FIFO
+          memoryState.cacheL2.shift()
+          memoryState.cacheL2.push(block)
+        }
+        updateMemoryDisplay()
+      }
+
+      function updateRAM(block) {
+        const ramIndex = Math.floor(block.start / 10)
+        if (ramIndex < memoryState.ram.length) {
+          memoryState.ram[ramIndex] = block
+        }
+        updateMemoryDisplay()
+      }
+
+      // Actualizar la visualización de la memoria
+      function updateMemoryDisplay() {
+        // Actualizar registros
+        memoryState.registers.forEach((addr, i) => {
+          document.getElementById(`reg-${i + 1}`).textContent = `R${i + 1}: ${
+            addr !== null ? addr : "Vacío"
+          }`
+        })
+
+        // Actualizar Caché L1
+        memoryState.cacheL1.forEach((block, i) => {
+          document.getElementById(`l1-${i + 1}`).textContent =
+            block !== null
+              ? `Dir ${block.start}-${block.end}`
+              : `Bloque ${i + 1}: Vacío`
+        })
+
+        // Actualizar Caché L2
+        memoryState.cacheL2.forEach((block, i) => {
+          document.getElementById(`l2-${i + 1}`).textContent =
+            block !== null
+              ? `Dir ${block.start}-${block.end}`
+              : `Bloque ${i + 1}: Vacío`
+        })
+      }
+
+      // Resaltar un bloque de memoria
+      function highlightBlock(id) {
+        // Eliminar resaltado anterior
+        document.querySelectorAll(".memory-block").forEach((block) => {
+          block.classList.remove("active")
+        })
+
+        // Aplicar nuevo resaltado
+        const block = document.getElementById(id)
+        if (block) {
+          block.classList.add("active")
+          setTimeout(() => {
+            block.classList.remove("active")
+          }, 500)
+        }
+      }
+
+      // Actualizar estadísticas
+      function updateStats() {
+        document.getElementById("total-accesses").textContent =
+          stats.totalAccesses
+        document.getElementById("register-hit-ratio").textContent =
+          stats.totalAccesses > 0
+            ? `${((stats.registerHits / stats.totalAccesses) * 100).toFixed(
+                2
+              )}%`
+            : "0%"
+        document.getElementById("l1-hit-ratio").textContent =
+          stats.totalAccesses > 0
+            ? `${((stats.l1Hits / stats.totalAccesses) * 100).toFixed(2)}%`
+            : "0%"
+        document.getElementById("l2-hit-ratio").textContent =
+          stats.totalAccesses > 0
+            ? `${((stats.l2Hits / stats.totalAccesses) * 100).toFixed(2)}%`
+            : "0%"
+        document.getElementById("ram-hit-ratio").textContent =
+          stats.totalAccesses > 0
+            ? `${((stats.ramHits / stats.totalAccesses) * 100).toFixed(2)}%`
+            : "0%"
+        document.getElementById("disk-accesses").textContent =
+          stats.diskAccesses
+        document.getElementById("avg-access-time").textContent =
+          stats.totalAccesses > 0
+            ? (stats.totalAccessTime / stats.totalAccesses).toFixed(2)
+            : "0"
+      }
+
+      // Registrar acceso en el log
+      function logAccess(message) {
+        const log = document.getElementById("access-log")
+        log.innerHTML += `<div>${message}</div>`
+        log.scrollTop = log.scrollHeight
+      }
+
+      // Reiniciar la simulación
+      function resetSimulation() {
+        stats = {
+          totalAccesses: 0,
+          registerHits: 0,
+          l1Hits: 0,
+          l2Hits: 0,
+          ramHits: 0,
+          diskAccesses: 0,
+          totalAccessTime: 0,
+        }
+
+        memoryState = {
+          registers: Array(4).fill(null),
+          cacheL1: Array(6).fill(null),
+          cacheL2: Array(8).fill(null),
+          ram: Array.from({ length: 10 }, (_, i) => ({
+            start: i * 10,
+            end: i * 10 + 9,
+            data: Array(10).fill(0),
+          })),
+          disk: Array.from({ length: 10 }, (_, i) => ({
+            start: i * 100,
+            end: i * 100 + 99,
+          })),
+        }
+
+        updateMemoryDisplay()
+        updateStats()
+        document.getElementById("access-log").innerHTML = ""
+      }
+
+      // Simulación de patrones de acceso
+      function simulateHighLocality() {
+        // Alta localidad: accesos muy cercanos
+        const baseAddress = Math.floor(Math.random() * 20)
+
+        for (let i = 0; i < 20; i++) {
+          const address =
+            baseAddress +
+            (Math.random() > 0.7 ? Math.floor(Math.random() * 3) : 0)
+          setTimeout(() => {
+            simulateAccess(address)
+          }, i * 300)
+        }
+      }
+
+      function simulateMediumLocality() {
+        // Localidad media: accesos en una región más amplia
+        const baseAddress = Math.floor(Math.random() * 50)
+
+        for (let i = 0; i < 20; i++) {
+          const address = baseAddress + Math.floor(Math.random() * 15)
+          setTimeout(() => {
+            simulateAccess(address)
+          }, i * 300)
+        }
+      }
+
+      function simulateLowLocality() {
+        // Baja localidad: accesos dispersos
+        for (let i = 0; i < 20; i++) {
+          const address = Math.floor(Math.random() * 100)
+          setTimeout(() => {
+            simulateAccess(address)
+          }, i * 300)
+        }
+      }
+
+      function simulateDiskIntensive() {
+        // Acceso intensivo a disco: accesos a direcciones lejanas
+        for (let i = 0; i < 20; i++) {
+          const address = Math.floor(Math.random() * 1000)
+          setTimeout(() => {
+            simulateAccess(address)
+          }, i * 300)
+        }
+      }
+
+      // Configurar event listeners
+      document
+        .getElementById("simulate-high")
+        .addEventListener("click", simulateHighLocality)
+      document
+        .getElementById("simulate-medium")
+        .addEventListener("click", simulateMediumLocality)
+      document
+        .getElementById("simulate-low")
+        .addEventListener("click", simulateLowLocality)
+      document
+        .getElementById("simulate-disk")
+        .addEventListener("click", simulateDiskIntensive)
+      document
+        .getElementById("reset")
+        .addEventListener("click", resetSimulation)
+
+      // Inicializar la simulación
+      resetSimulation()
+    </script>
+  </body>
+</html>
