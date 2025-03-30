@@ -1,0 +1,210 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+}
+
+.container {
+  margin: 0 auto;
+  background-color: #34495e;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+h1,
+h2 {
+  color: #e74c3c;
+  font-weight: 600;
+  text-align: center;
+}
+
+h3 {
+  color: #f1c40f;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Sistema de memoria */
+.memory-system {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.memory-level {
+  margin: 5px;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.memory-level:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Colores para los niveles de memoria */
+#registers {
+  background-color: #8e44ad;
+  width: 90px;
+}
+
+#cache-l1 {
+  background-color: #9b59b6;
+  width: 130px;
+}
+
+#cache-l2 {
+  background-color: #3498db;
+  width: 160px;
+}
+
+#ram {
+  background-color: #2980b9;
+  width: 210px;
+}
+
+#disk {
+  background-color: #16a085;
+  width: 260px;
+}
+
+/* Bloques de memoria */
+.memory-block {
+  margin: 8px 0;
+  padding: 8px;
+  background-color: rgba(236, 240, 241, 0.15);
+  border-radius: 6px;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.memory-block:hover {
+  background-color: rgba(236, 240, 241, 0.25);
+}
+
+.active {
+  background-color: #e74c3c;
+  color: #ecf0f1;
+  font-weight: bold;
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Panel de control */
+.control-panel {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #243342;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  padding: 10px 18px;
+  margin: 8px;
+  background-color: #e67e22;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+button:hover {
+  background-color: #d35400;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+#reset {
+  background-color: #c0392b;
+}
+
+#reset:hover {
+  background-color: #a93226;
+}
+
+/* Registro de accesos */
+#access-log {
+  height: 150px;
+  overflow-y: auto;
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #1a2530;
+  border: 1px solid #445566;
+  border-radius: 8px;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 12px;
+  color: #bdc3c7;
+}
+
+/* Estadísticas */
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 25px;
+  gap: 20px;
+}
+
+.stat-box {
+  flex: 1;
+  min-width: 250px;
+  margin: 5px;
+  padding: 20px;
+  background-color: #243342;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stat-box h3 {
+  margin-top: 0;
+  border-bottom: 2px solid #e74c3c;
+  padding-bottom: 10px;
+}
+
+.stat-box p {
+  color: #bdc3c7;
+  font-size: 14px;
+}
+
+.stat-box span {
+  color: #f1c40f;
+  font-weight: bold;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .memory-system {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .memory-level {
+    width: 80% !important;
+  }
+
+  .stats {
+    flex-direction: column;
+  }
+}
